@@ -3,6 +3,8 @@
 #include <string>
 #include <exception>
 
+// функция what() не была наследована, ибо vs(windows) noexcept, а на  mac _NOEXCEPT
+
 class ErrorObject : public std::exception {
 protected:
     std::string name;
@@ -133,18 +135,18 @@ protected:
 class TriangleDefault : public Object {
 public:
     TriangleDefault() = default;
-    TriangleDefault(const int& i, const int& x, const int& y,
-        const int& z, const int& r, const int& a, const std::string& name = "Triangle Default") {
-        set_sides(i);
-        set_sides(x);
-        set_sides(y);
-        set_corners(z);
-        set_corners(r);
-        set_corners(a);
-        if (get_count_sides() != 3)
-            throw ErrrorTriangle(i, x, y, z, r, a, name, "The number of sides is not equal to 3");
-        if (get_corner_one() + get_corner_two() + get_corner_three() != 180)
-            throw ErrrorTriangle(i, x, y, z, r, a, name, "The sum of the angles is not equal to 180");
+    TriangleDefault(const int& side1, const int& side2, const int& side3,
+        const int& corner1, const int& corner2, const int& corner3, const std::string& name = "Triangle Default") {
+        if (side1 == 0 || side2 == 0 || side3 == 0)
+            throw ErrrorTriangle(side1, side2, side3, corner1, corner2, corner3, name, "The number of sides is not equal to 3");
+        if (corner1 + corner2 + corner3 != 180)
+            throw ErrrorTriangle(side1, side2, side3, corner1, corner2, corner3, name, "The sum of the angles is not equal to 180");
+        set_sides(side1);
+        set_sides(side2);
+        set_sides(side3);
+        set_corners(corner1);
+        set_corners(corner2);
+        set_corners(corner3);
         set_name(name);
     }
     void print() override {
@@ -157,54 +159,54 @@ public:
 
 class TriangleRight : public TriangleDefault {
 public:
-    TriangleRight(const int& i, const int& x, const int& y,
-        const int& z, const int& r, const int& a, const std::string& name = "Triangle Right") {
-        set_sides(i);
-        set_sides(x);
-        set_sides(y);
-        set_corners(z);
-        set_corners(r);
-        set_corners(a);
-        if (get_corner_three() != 90)
-            throw ErrrorTriangle(i, x, y, z, r, a, name, "The angle is not equal to 90");
+    TriangleRight(const int& side1, const int& side2, const int& side3,
+        const int& corner1, const int& corner2, const int& corner3, const std::string& name = "Triangle Right") {
+        if (corner3 != 90)
+            throw ErrrorTriangle(side1, side2, side3, corner1, corner2, corner3, name, "The angle 3 is not equal to 90");
+        set_sides(side1);
+        set_sides(side2);
+        set_sides(side3);
+        set_corners(corner1);
+        set_corners(corner2);
+        set_corners(corner3);
         set_name(name);
     }
 };
 
 class TriangleIsosceles : public TriangleDefault {
 public:
-    TriangleIsosceles(const int& i, const int& x, const int& y,
-        const int& z, const int& r, const int& a, const std::string& name = "Triangle Isosceles") {
-        set_sides(i);
-        set_sides(x);
-        set_sides(y);
-        set_corners(z);
-        set_corners(r);
-        set_corners(a);
-        if (get_side_one() != get_side_three())
-            throw ErrrorTriangle(i, x, y, z, r, a, name, "Side A is not equal to side");
-        if (get_corner_one() != get_corner_three())
-            throw ErrrorTriangle(i, x, y, z, r, a, name, "Angle A is not equal to angle");
+    TriangleIsosceles(const int& side1, const int& side2, const int& side3,
+        const int& corner1, const int& corner2, const int& corner3, const std::string& name = "Triangle Isosceles") {
+        if (side1 != side3)
+            throw ErrrorTriangle(side1, side2, side3, corner1, corner2, corner3, name, "Side A is not equal to side");
+        if (corner1 != corner3)
+            throw ErrrorTriangle(side1, side2, side3, corner1, corner2, corner3, name, "Angle A is not equal to angle");
+        set_sides(side1);
+        set_sides(side2);
+        set_sides(side3);
+        set_corners(corner1);
+        set_corners(corner2);
+        set_corners(corner3);
         set_name(name);
     }
 };
 
 class TriangleEquilateral : public TriangleDefault {
 public:
-    TriangleEquilateral(const int& i, const int& x, const int& y,
-        const int& z, const int& r, const int& a, const std::string& name = "Triangle Equilateral") {
-        set_sides(i);
-        set_sides(x);
-        set_sides(y);
-        set_corners(z);
-        set_corners(r);
-        set_corners(a);
-        if (get_side_one() != get_side_two() || get_side_two() != get_side_three() ||
-            get_side_one() != get_side_three())
-            throw "The sides are not equal\n";
-        if (get_corner_one() != get_corner_two() || get_corner_one() != get_corner_three() ||
-            get_corner_two() != get_corner_three())
-            throw "The angles are not equal\n";
+    TriangleEquilateral(const int& side1, const int& side2, const int& side3,
+        const int& corner1, const int& corner2, const int& corner3, const std::string& name = "Triangle Equilateral") {
+        if (side1 != side2 || side2 != side3 ||
+            side1 != side3)
+            throw ErrrorTriangle(side1, side2, side3, corner1, corner2, corner3, name, "The sides are not equal");
+        if (corner1 != corner2 || corner1 != corner3 ||
+            corner2 != corner3)
+            throw ErrrorTriangle(side1, side2, side3, corner1, corner2, corner3, name, "The angles are not equal");
+        set_sides(side1);
+        set_sides(side2);
+        set_sides(side3);
+        set_corners(corner1);
+        set_corners(corner2);
+        set_corners(corner3);
         set_name(name);
     }
 };
@@ -212,21 +214,20 @@ public:
 class QuadrilateralDefault : public Object {
 public:
     QuadrilateralDefault() = default;
-    QuadrilateralDefault(const int& i, const int& x, const int& y,
-        const int& z, const int& r, const int& a, const int& s,
-        const int& d, const std::string& name = "Quadrilateral Default") {
-        set_sides(i);
-        set_sides(x);
-        set_sides(y);
-        set_sides(z);
-        set_corners(r);
-        set_corners(a);
-        set_corners(s);
-        set_corners(d);
-        if (get_count_sides() != 4)
-            throw "The number of sides is not equal to 4\n";
-        if (get_corner_one() + get_corner_two() + get_corner_three() + get_corner_four() != 360)
-            throw "The sum of the angles is not equal to 360\n";
+    QuadrilateralDefault(const int& side1, const int& side2, const int& side3, const int &side4,
+        const int& corner1, const int& corner2, const int& corner3, const int &corner4, const std::string& name = "Quadrilateral Default") {
+        if (side1 == 0 || side2 == 0 || side3 == 0 || side4 == 0)
+            throw ErrorQuadrilateral(side1, side2, side3, side4, corner1, corner2, corner3, corner4, name, "The number of sides is not equal to 4");
+        if (corner1 + corner2 + corner3 + corner4 != 360)
+            throw ErrorQuadrilateral(side1, side2, side3, side4, corner1, corner2, corner3, corner4, name, "The sum of the angles is not equal to 360");
+        set_sides(side1);
+        set_sides(side2);
+        set_sides(side3);
+        set_sides(side4);
+        set_corners(corner1);
+        set_corners(corner2);
+        set_corners(corner3);
+        set_corners(corner4);
         set_name(name);
     }
     void print() override {
@@ -239,22 +240,21 @@ public:
 
 class Rectangle : public QuadrilateralDefault {
 public:
-    Rectangle(const int& i, const int& x, const int& y,
-        const int& z, const int& r, const int& a, const int& s,
-        const int& d, const std::string& name = "Rectangle") {
-        set_sides(i);
-        set_sides(x);
-        set_sides(y);
-        set_sides(z);
-        set_corners(r);
-        set_corners(a);
-        set_corners(s);
-        set_corners(d);
-        if (get_side_one() != get_side_three() || get_side_two() != get_side_four())
-            throw "The pairwise sides are not equal\n";
-        if (get_corner_one() != 90 || get_corner_two() != 90 ||
-            get_corner_three() != 90 || get_corner_four() != 90)
-            throw "The angles are not equal to 90\n";
+    Rectangle(const int& side1, const int& side2, const int& side3, const int& side4,
+        const int& corner1, const int& corner2, const int& corner3, const int& corner4, const std::string& name = "Rectangle") {
+        if (side1 != side3 || side2 != side4)
+            throw ErrorQuadrilateral(side1, side2, side3, side4, corner1, corner2, corner3, corner4, name, "The pairwise sides are not equal");
+        if (corner1 != 90 || corner2 != 90 ||
+            corner3 != 90 || corner4 != 90)
+            throw ErrorQuadrilateral(side1, side2, side3, side4, corner1, corner2, corner3, corner4, name, "The angles are not equal to 90");
+        set_sides(side1);
+        set_sides(side2);
+        set_sides(side3);
+        set_sides(side4);
+        set_corners(corner1);
+        set_corners(corner2);
+        set_corners(corner3);
+        set_corners(corner4);
         set_name(name);
     }
 
@@ -262,24 +262,21 @@ public:
 
 class Square : public QuadrilateralDefault {
 public:
-    Square(const int& i, const int& x, const int& y,
-        const int& z, const int& r, const int& a, const int& s,
-        const int& d, const std::string& name = "Square") {
-        set_sides(i);
-        set_sides(x);
-        set_sides(y);
-        set_sides(z);
-        set_corners(r);
-        set_corners(a);
-        set_corners(s);
-        set_corners(d);
-        if (get_side_one() != get_side_two() || get_side_one() != get_side_three() ||
-            get_side_one() != get_side_four() || get_side_two() != get_side_three() ||
-            get_side_two() != get_side_four() || get_side_three() != get_side_four())
-            throw "The sides are not equal\n";
-        if (get_corner_one() != 90 || get_corner_two() != 90 ||
-            get_corner_three() != 90 || get_corner_four() != 90)
-            throw "The angles are not equal to 90\n";
+    Square(const int& side1, const int& side2, const int& side3, const int& side4,
+        const int& corner1, const int& corner2, const int& corner3, const int& corner4, const std::string& name = "Square") {
+        if (side1 != side2 || side1 != side3 || side1 != side4 || side2 !=  side3 || side2 !=  side4 || side3 != side4)
+            throw ErrorQuadrilateral(side1, side2, side3, side4, corner1, corner2, corner3, corner4, name, "The sides are not equal");
+        if (corner1 != 90 || corner2 != 90 ||
+            corner3 != 90 || corner4 != 90)
+            throw ErrorQuadrilateral(side1, side2, side3, side4, corner1, corner2, corner3, corner4, name, "The angles are not equal to 90");
+        set_sides(side1);
+        set_sides(side2);
+        set_sides(side3);
+        set_sides(side4);
+        set_corners(corner1);
+        set_corners(corner2);
+        set_corners(corner3);
+        set_corners(corner4);
         set_name(name);
     }
 };
@@ -287,45 +284,41 @@ public:
 class Parallelogram : public QuadrilateralDefault {
 public:
     Parallelogram() = default;
-    Parallelogram(const int& i, const int& x, const int& y,
-        const int& z, const int& r, const int& a, const int& s,
-        const int& d, const std::string& name = "Parallelogram") {
-        set_sides(i);
-        set_sides(x);
-        set_sides(y);
-        set_sides(z);
-        set_corners(r);
-        set_corners(a);
-        set_corners(s);
-        set_corners(d);
-        if (get_side_one() != get_side_three() || get_side_two() != get_side_four())
-            throw "The pairwise sides are not equal\n";
-        if (get_corner_one() != get_corner_three() || get_corner_two() != get_corner_four())
-            throw "The angles are not equal\n";
+    Parallelogram(const int& side1, const int& side2, const int& side3, const int& side4,
+        const int& corner1, const int& corner2, const int& corner3, const int& corner4, const std::string& name = "Parallelogram") {
+        if (side1 != side3 || side2 != side4)
+            throw ErrorQuadrilateral(side1, side2, side3, side4, corner1, corner2, corner3, corner4, name, "The pairwise sides are not equal");
+        if (corner1 != corner3 || corner2 != corner4)
+            throw ErrorQuadrilateral(side1, side2, side3, side4, corner1, corner2, corner3, corner4, name, "The angles are not equal");
+        set_sides(side1);
+        set_sides(side2);
+        set_sides(side3);
+        set_sides(side4);
+        set_corners(corner1);
+        set_corners(corner2);
+        set_corners(corner3);
+        set_corners(corner4);
         set_name(name);
     }
 };
 
 class Rhomb :public Parallelogram {
 public:
-    Rhomb(const int& i, const int& x, const int& y,
-        const int& z, const int& r, const int& a, const int& s,
-        const int& d, const std::string& name = "Rhomb") {
-        set_sides(i);
-        set_sides(x);
-        set_sides(y);
-        set_sides(z);
-        set_corners(r);
-        set_corners(a);
-        set_corners(s);
-        set_corners(d);
-        if (get_side_one() != get_side_two() || get_side_one() != get_side_three() ||
-            get_side_one() != get_side_four() || get_side_two() != get_side_three() ||
-            get_side_two() != get_side_four() || get_side_three() != get_side_four())
-            throw "The sides are not equal\n";
-        if (get_corner_one() != get_corner_three() || get_corner_two() != get_corner_four())
-            throw "The angles are not equal\n";
+    Rhomb(const int& side1, const int& side2, const int& side3, const int& side4,
+        const int& corner1, const int& corner2, const int& corner3, const int& corner4, const std::string& name = "Rhomb") {
+        if (side1 != side2 || side1 != side3 || side1 != side4 || side2 != side3 || side2 != side4 || side3 != side4)
+            throw ErrorQuadrilateral(side1, side2, side3, side4, corner1, corner2, corner3, corner4, name, "The sides are not equal");
+        if (corner1 != corner3 || corner2 != corner4)
+            throw ErrorQuadrilateral(side1, side2, side3, side4, corner1, corner2, corner3, corner4, name, "The angles are not equal");
         set_name(name);
+        set_sides(side1);
+        set_sides(side2);
+        set_sides(side3);
+        set_sides(side4);
+        set_corners(corner1);
+        set_corners(corner2);
+        set_corners(corner3);
+        set_corners(corner4);
     }
 };
 
@@ -344,6 +337,8 @@ int main() {
         Object* o = &td;
         Object ob{ "Object" };
         print(o, ob);
+        print(o, td);
+        TriangleRight tr{ 1,2,3,60, 70, 50 };
     }
     catch (ErrorObject& ex) {
         std::cout << ex.error_message();
